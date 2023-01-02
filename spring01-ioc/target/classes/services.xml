@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- services -->
+
+    <!-- ioc 容器创建实例有三种方法:
+         1. 没有指定 factory-bean 和 factory-method 时, 调用 [class] 类的构造器
+         2. 仅指定 factory-method 而没有指定 factory-bean 时调用 [class] 类的
+            [factory-method] 静态工厂方法创建这个对象
+         3. factory-method 和 factory-bean 均指定时, 调用 [factory-bean] 类的
+            [factory-method] 实例工厂方法创建这个对象, 这个时候 class 属性无需指定
+         🌟 factory-bean 是已经配置好的 SpringBean
+         🌟 使用工厂方法创建对象时, ioc 容器只负责调用方法, 最后放入容器的对象的类型只取决于这个
+            方法的返回类型, 而与 [class] 无关 -->
+
+    <!-- DI (依赖注入) 的两种方式:
+         1. 构造器注入: 在 <bean/> 中使用标签 <constructor-arg/>, 这个标签相当于给构造器传递的参数.
+            <constructor-arg name=[argName] ref|value=[argRef|argValue] index[argIndex]>
+            name 是参数名称, ref 是容器里另外一个 bean 的引用 id, value 是原语值, index 是参数列
+            表中参数的下标. 这里需要注意的是, 这个标签可以仅指定 ref 属性, 因为 ioc 容器在使用构造器
+            注入时, 会自动识别参数的类型, 把这里配置的参数值自动传递到构造函数参数列表里与它类型匹配的参
+            数上. 但是当参数列表中有多个参数类型相同时就无法准确进行匹配了, 这个时候有两种方法可以解决.
+            第一是使用<constructor-arg/> 标签的 index 属性来指定当前这个标签里的参数值对应的构造函数
+            参数列表里的参数下标索引. 第二是使用 <constructor-arg/> 标签的 name 属性来指定当前这个标
+            签里的参数值对应的构造函数参数列表里的参数的名称
+
+         2. Setter 注入: 在 <bean> 中使用标签 <property>, ioc 容器在为对象注入属性值时, 会调用属性
+            对应的 setter 方法来对属性进行赋值. <property name=[attrName] ref|value = [attrRef|attrValue]
+            name 是属性的名称, ref 是容器里另外一个 bean 的引用 id, value 是原语值
+
+         🌟 ref 属性也可以用单独的标签 <ref/> 来替代, 通过 ref 引用的 bean 称为 collaborator (合作者),
+            使用 ref 注入依赖的 bean 属于手动装配
+
+         两种 DI 该如何选择?
+         1. 当属性是必要的时候, 选择构造器注入可以保证这些属性不为空, 我们从容器中拿对象的时候拿到的都是
+            初始化好的对象, 并且如果出现问题在构造这个对象时就可以发现, spring 更加推荐构造器注入, 放入
+            容器里的 bean 是一个完全体, 是一个完整的成品, 而不是一个为初始化的半成品
+
+         2. 当属性是可选的, 不是必须要注入的, 或者有合理的默认值的, 可以选择使用 setter 注入, 但如果使
+            用这种注入方式, 要非常注意空指针异常 -->
+
+    <bean id="userService" factory-bean="userServiceFactory" factory-method="getUserService">
+
+    </bean>
+
+    <!-- 通过构造器注入 orderDao 和 productDao 属性 -->
+    <bean id="orderService" class="com.seamew.xmlConfig.service.OrderServiceImpl">
+        <constructor-arg name="orderDao" ref="orderDao"/>
+        <constructor-arg name="productDao" ref="productDao"/>
+    </bean>
+
+    <!-- 通过 setter 注入 productDao 属性 -->
+    <bean id="productService" class="com.seamew.xmlConfig.service.ProductServiceImpl">
+        <property name="productDao" ref="productDao"/>
+    </bean>
+
+</beans>

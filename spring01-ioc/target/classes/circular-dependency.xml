@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <!-- spring 解决循环依赖的方案: spring 的 ioc 容器共有三级缓存, 三级缓存与 AOP 相关,
+         这里暂时不提. spring 会把构造好但未初始化完成的 bean 放入容器的 二级缓存中, 等 bean
+         完全构造完成后放入一级缓存 -->
+
+    <!-- a -> b, b -> a, 形成循环依赖. a 构造完成之后处于未初始化完成的状态 (a.b=null), 被放在二级缓存中,
+         要通过 setter 注入 b, 于是 spring 在容器中寻找 b, 一二级缓存中都没有发现 b, 开始构造 b, b 构造完
+         成后处于未初始化完成的状态 (b.a=null), 被放在二级缓存中, 要通过 setter 注入 a, 在二级缓存中, 把找
+         到的 a 的引用赋值给 b 中的 a 属性, 至此 b 初始化完成, 容器把 b 从二级缓存移入一级缓存, 再把这个完整
+         的 b 对象的引用赋值给 a 中的 b 属性, 至此 a 初始化完成, 容器把 a 从二级缓存移入一级缓存 -->
+    <bean id="a" class="com.seamew.xmlConfig.circularDependency.A" autowire="byType"/>
+    <bean id="b" class="com.seamew.xmlConfig.circularDependency.B" autowire="byType"/>
+
+    <!-- 两级缓存的方案也并不一定能解决所有的循环依赖, 只有当 bean 可以以未初始化的状态被构造出来时 (即使用 setter
+         注入. 比如在 <bean/> 中配置 <property/> 或 autowire=byType|byName), 两级缓存才能够解决循环依赖.
+         但是当 bean 的构造方式为构造器注入时, 就像下面的例子, c 需要在构造器中注入 d, d 也需要在构造器中注入 c,
+         c 构造时 spring 在容器中找不到 d, d 构造时 spring 在容器中也找不到 c, 那么 c 和 d 都无法被构造出来,
+         都不能被放入二级缓存, 那么这就是一个无法解决的循环依赖问题  -->
+    <bean id="c" class="com.seamew.xmlConfig.circularDependency.C" autowire="constructor" lazy-init="true"/>
+    <bean id="d" class="com.seamew.xmlConfig.circularDependency.D" autowire="constructor" lazy-init="true"/>
+
+</beans>

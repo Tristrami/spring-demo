@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="xmlAspect" class="com.seamew.aspect.XmlAspect"/>
+
+    <bean id="orderService" class="com.seamew.service.impl.OrderServiceImpl"/>
+
+    <bean id="myAdvisor" class="com.seamew.aspect.MyAdvisor"/>
+
+    <!-- <aop:aspectj-autoproxy/> 可以开启对 @AspectJ 注解的支持-->
+
+    <!-- xml 配置的三个缺点:
+         1. xml 不能把一个切面需要的所有组成部分都声明到一个地方, 例如, 我们的 advice 方法还要在其它地方写
+         2. xml 中不能用逻辑符号结合多个具名的切点表达式, 例如 pointcutA() && pointcutB()
+         3. xml 中对 Aspect 类的实例化只支持单例模式 -->
+
+    <!-- <aop:config/> 中可以在 <aop:aspect/> 中定义 <aop:advice/> 和 <aop:pointcut/>, 也可以使用
+         <aop:advisor/> 来直接提供 advice, 在 <aop:config/> 中可以有多个 <aop:advisor/> 或多个
+         <aop:aspect/> -->
+    <aop:config>
+        <aop:aspect ref="xmlAspect">
+            <aop:pointcut id="theExecutionOfCancelOrder"
+                 expression="execution(* com.seamew.service.IOrderService.cancelOrder(..)) &amp;&amp; args(order)"/>
+
+            <aop:before method="checkOrderStatus" pointcut-ref="theExecutionOfCancelOrder"/>
+       <!-- 上面的配置也可以用下面的写法, 其中 pointcut 属性可以写具体的表达式, 也可以引用带有 @Pointcut 的切点声明方法 -->
+       <!-- <aop:before method="checkOrderStatus" pointcut="com.seamew.xxx.somePointcut() and args(order)" -->
+
+       <!-- <aop:declare-parents/> 中的 type-matching 属性是 AspectJ 的类型匹配表达式 -->
+            <aop:declare-parents types-matching="com.seamew.service.IOrderService+"
+                 implement-interface="com.seamew.service.IActivityService"
+                 default-impl="com.seamew.service.impl.ActivityServiceImpl"/>
+        </aop:aspect>
+    </aop:config>
+</beans>

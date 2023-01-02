@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- services -->
+
+    <!-- name 属性可以指定 bean 的别名, 多个别名可以用逗号分号或空格分隔 -->
+    <!-- 这里使用构造器实例化对象 -->
+    <bean id="userDao" name="userDao2 userDao3" class="com.seamew.xmlConfig.dao.UserDaoImpl">
+
+    </bean>
+
+    <bean id="orderDao" class="com.seamew.xmlConfig.dao.OrderDaoImpl">
+
+    </bean>
+
+    <bean id="productDao" class="com.seamew.xmlConfig.dao.ProductDaoImpl">
+
+    </bean>
+
+    <!-- 给 bean 起别名 -->
+    <alias name="userDao2" alias="userDao4"/>
+    <alias name="userDao3" alias="userDao5"/>
+
+    <!-- more bean definitions for services go here -->
+
+</beans>

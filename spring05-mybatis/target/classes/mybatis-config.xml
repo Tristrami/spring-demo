@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- Configuration 类的空参构造中注册了许多常用的别名, 下面的 SLF4J 就是其中之一
+             Mybatis 的别名均保存在 TypeAliasRegistry 对象中, 这个对象的空参构造里面会
+             帮我们注册好基础数据类型的别名, 如 Integer -> int, int -> _int -->
+        <setting name="logImpl" value="SLF4J" />
+
+        <!-- 为所有打印 sql 相关日志的 logger 的名字加上前缀 -->
+        <setting name="logPrefix" value="mybatis.sql." />
+
+        <!-- 将数据库字段下划线命名映射为驼峰式命名 -->
+        <!-- <setting name="mapUnderscoreToCamelCase" value="true" /> -->
+
+        <!-- 延迟加载的全局开关. 如果关闭这个开关, 使用嵌套查询时, 会所有发送 sql 语句进行查询,
+             也就是说, 无论关联对象是否会用到, 都会进行查询, 而打开这个开关以后, 只有在用到关联对象
+             的属性或方法时才会去查询关联对象 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+
+        <!-- 开启时，任一方法的调用都会加载该对象的所有延迟加载属性; 否则, 每个延迟加载属性会按需加载 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+
+    </settings>
+
+    <typeAliases>
+        <package name="com.seamew.entity" />
+    </typeAliases>
+
+</configuration>

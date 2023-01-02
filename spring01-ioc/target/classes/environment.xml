@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 我们可以在 <beans/> 标签中使用 profile 属性来指定其中的 beanDefinition 所属
+         的环境, 可以全局指定, 也可以独立创建一个 <beans/> 指定. 注意, 如果使用了多环境,
+         那就必须至少激活一个环境, 否则 spring 不会加载 beanDefinition, 要注意, xml 配置
+         多环境时不支持使用 & | ! 运算符, 要实现这些逻辑可以采用嵌套 <beans/> 标签的方法
+
+         🌟 激活环境的三种方法:
+
+         🔍 通过注解配置多环境时:
+            // 1. 构造容器
+            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+            // 2. 为容器设置要激活的环境
+            ctx.getEnvironment().setActiveProfiles("product");
+            // 3. 向容器中注册组件
+            ctx.register(DevelopmentDataSourceConfig.class, ProductDataSourceConfig.class);
+            // 4. 刷新容器, 解析 beanDefinition
+            ctx.refresh();
+
+         🔍 通过 xml 配置多环境时:
+            // 1. 构造容器
+            ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("environment.xml");
+            // 2. 为容器设置要激活的环境
+            context.getEnvironment().setActiveProfiles("development");
+            // 3. 刷新容器, 解析 xml 中的 beanDefinition
+            context.refresh();
+
+         🔍 通过 JVM 启动参数激活: -Dspring.profiles.active="profile1,profile2" -->
+
+    <beans profile="development">
+
+        <bean id="developmentDataSourceConfig"
+              class="com.seamew.annotationConfig.environment.profile.dataSource.DevelopmentDataSourceConfig"/>
+
+        <bean id="developmentDataSource"
+              factory-bean="developmentDataSourceConfig"
+              factory-method="getDataSource"/>
+
+    </beans>
+
+    <beans profile="product">
+
+        <bean id="productDataSourceConfig"
+              class="com.seamew.annotationConfig.environment.profile.dataSource.ProductDataSourceConfig"/>
+
+        <bean id="productDataSource"
+              factory-bean="developmentDataSourceConfig"
+              factory-method="getDataSource"/>
+
+    </beans>
+
+    <beans profile="test">
+
+        <bean id="testDataSourceConfig"
+              class="com.seamew.annotationConfig.environment.profile.dataSource.TestDataSourceConfig"/>
+
+        <bean id="testDataSource"
+              factory-bean="testDataSourceConfig"
+              factory-method="getDataSource"/>
+
+    </beans>
+
+</beans>

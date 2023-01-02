@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- 如果 ApplicationContext 中的 bean 实现了 ApplicationContextAware 接口,
+     那么这个 bean 就有了获得创造它的 context 的引用的能力. 使用 setApplicationContext
+     回调函数就可以获得这个索引. 同理, 实现了 BeanNameAware 接口的 bean 就有了获得其在容器中
+     id | name 的能力, 使用 setBeanName 回调函数就可以获得 id | name, id 优先于 name
+     🌟 beanNameAware 接口的 setBeanName 方法会在 bean 的依赖注入完成之后, 初始化回调函数
+        (例如 afterPropertiesSet, 或者自己配置的回调函数) 调用之前被调用
+     🌟 spring 并不推荐我们实现接口, 因为这会让我们的代码和 spring 的代码强耦合在一起, spring
+        更推荐我们使用 @AutoWire 注解来自动装配如 ApplicationContext, beanName 这样的属性 -->
+
+    <bean id="awareBean" name="awareBean2" class="com.seamew.xmlConfig.aware.AwareBean"/>
+
+</beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- spring 中 bean 的作用域 (作用范围) 共有六种: singleton, prototype, request,
+         session, application, websocket, 这里先说 singleton 和 prototype 两种
+
+         1. singleton:
+            每个 bean 在 **ioc 容器** 中都是独一无二的存在形式, spring 完全负责 bean 完整的生命周期.
+            spring 的 singleton 概念与设计模式中的 singleton 不完全一样, 设计模式中的单例指的是对于每
+            个类加载器来说, 只创造一个实例. 而 spring 的单例指的是每个 spring 容器中只存在一个实例.
+
+         2. prototype:
+            每次客户端向 ioc 容器请求某个 bean 时, 容器都会创建一个新的实例. spring 并不负责 bean 完整
+            的生命周期, 只负责 bean 的实例化, 配置和装配, 然后就把这个 bean 交到客户端的手里, 由客户端负
+            责 bean 剩下的生命周期
+
+         🌟 注意, 向 singleton-bean 中依赖注入 prototype-bean 时, 容器会创建一个新的 prototype-bean
+            注入进去 -->
+
+    <bean id="singleton" class="com.seamew.xmlConfig.beanScope.Singleton" scope="singleton"/>
+
+    <bean id="prototype" class="com.seamew.xmlConfig.beanScope.Prototype" scope="prototype"/>
+
+</beans>

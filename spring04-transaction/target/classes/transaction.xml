@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 使用 xml 配置用到了注解一定要记得开启注解配置! -->
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:hikari.properties"/>
+
+    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="username" value="${databaseUsername}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="hikariDataSource"/>
+    </bean>
+
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="hikariDataSource"/>
+    </bean>
+
+    <bean id="logService" class="com.seamew.service.impl.LogServiceImpl"/>
+
+    <bean id="accountService" class="com.seamew.service.impl.AccountServiceImpl"/>
+
+    <!-- 当我们想让 <tx:advice/> 的 transaction-manager 属性使用名字为 transactionManager
+         的 bean 时, transaction-manager 可以直接删除, 如果要使用其他的 TransactionManager,
+         必须明确指定 transaction-manager 属性 -->
+    <tx:advice id="defaultTxAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <!-- 指定要使用事物的方法, 并且进行相应的配置 -->
+            <tx:method name="*"/>
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 要注意切面是不会对匹配到的类的父类自己的方法有影响的, 父类要使用事物时需要重新声明事物 -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation"
+                      expression="execution(* com.seamew.service..*Service*.*(..))"/>
+        <aop:advisor advice-ref="defaultTxAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+</beans>

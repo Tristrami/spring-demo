@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 在 xml 中为属性赋值时可以直接用 SpEL 表达式, 格式为 "#{...}"  -->
+    <bean id="xmlBuckList" class="#{ 'com.seamew.spel.BuckList' }">
+        <property name="list" value="#{ 'travel,singing,reading'.split(',') }"/>
+    </bean>
+
+    <bean id="birthday" class="com.seamew.spel.Birthday">
+        <property name="year" value="2000"/>
+        <property name="month" value="11"/>
+        <property name="day" value="28"/>
+    </bean>
+
+    <bean id="person" class="com.seamew.spel.Person">
+        <property name="name" value="lulu"/>
+        <property name="age" value="21"/>
+        <property name="birthday" ref="birthday"/>
+        <property name="hobbies">
+            <array>
+                <value>singing</value>
+                <value>running</value>
+            </array>
+        </property>
+        <property name="phoneNumber">
+            <list>
+                <value>18768592825</value>
+                <value>18768592826</value>
+            </list>
+        </property>
+        <property name="contacts">
+            <map>
+                <entry key="ltr" value="15902685501"/>
+            </map>
+        </property>
+    </bean>
+
+</beans>

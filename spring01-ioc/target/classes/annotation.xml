@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 使用 xml 配置用到注解时一定要开启注解配置! -->
+    <context:annotation-config/>
+
+<!-- @Autowired 注解可以放在构造器上, 方法上, 字段上. spring 会先尝试通过字段类型或方法的
+     参数类型在容器中匹配 bean, 如果有多个 bean 满足条件, 再通过字段名或方法参数名来匹配 bean.
+     如果 @Autowired 的目标依赖并非必须的 (必须指的是, 如果在 spring 容器中找不到合适的 bean
+     注入这个依赖就会报错) 可以为 @Autowired 注解添加 [required = false], 这样如果 spring
+     在容器中如果找不到合适的 bean, 那么就不会尝试注入依赖, 换句话说, 这样可以为某个目标取消自动
+     装配, 允许待注入的属性为空
+
+     🌟 如果需要注入的属性是集合或数组类型, spring 会把容器中所有符合条件的 bean 注入其中.
+        需要注意的是, Map 的 key 必须为 String 类型, 因为 Spring 会把容器中 bean 的名
+        称作为 key 注入 Map 中
+
+     🌟 如果所有的 @Autowired 策略都失败了, spring 会最后考虑尝试使用自己 (当前正在被注入
+       的对象) 来进行注入.
+
+     @Qualifier:
+     https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-autowired-annotation-qualifiers
+     🌟 使用 @Autowired 注解时, 如果 spring 通过类型匹配到多个满足条件的 bean, 那么
+        spring 会选择 id | name 和待注入属性名称相同 bean. 如果希望在类型匹配有多个
+        bean 满足条件时, 指定一个 bean 被优先选择, 那么可以在这个 bean 的 <bean/>
+        中配置 [primary="true"], 或者使用 @Primary 注解; 如果要为 @Autowired 的目标
+        指定要注入的 bean, 可以在目标上加上 @Qualifier("[beanName]")注解, 这样就有了
+        autowire="byName" 的语意. (Qualifier: 限定词). @Qualifier 注解同样可以加在
+        构造函数的某个参数上.
+
+     🌟 @Qualifier 的语意是给 bean 指定一个限定词 (修饰词), 每个 spring bean 都自带
+       一个 qualifier, 默认为 bean 的名称. 在使用 @Autowired 来自动注入依赖时, 如果
+       根据类型匹配后有多个候选的 bean, 我们可以配合使用 @Qualifier 来指定一个修饰词,
+       spring 会根据我们指定的修饰词, 在候选的 bean 当中选定一个符合修饰词的 bean 来进行
+       依赖注入, 所以在这里 @Qualifier 的语意变成了筛选有指定修饰词的 bean. @Autowired
+       通过类型匹配到多个候选的 bean 时, 默认会匹配 bean 名称与字段名或参数名相同的 bean,
+       也就是说, 如果我们希望 spring 通过这种方式去候选 bean 中筛选符合条件的 bean, 那么
+       无需使用 @Qualifier 注解
+
+     🌟 @Qualifier 还可以用在注解上, 将注解最为 "修饰词", 详见官网
+
+     🌟 @Qualifier 用法总结:
+       1. @Qualifier 用在 BeanDefinition 上时语意是给这个 bean 指定一个修饰词, 也可以
+          理解为一个特定的标识符, 用来把这个 bean 和其它 bean 区分开
+       2. @Qualifier 与 @Autowired 配合使用时, 语意是从按类型匹配 (byType) 到的多个候选
+          bean 中按照给定的修饰词匹配一个唯一符合条件的 bean
+       3. @Qualifier 用在其它注解的定义中时, 语意是让这个注解拥有 "修饰词" 的语意
+
+     @Resource 是 JakartaEE 中的标准, 在 spring 中和 @Autowired 有相似作用, 可以
+     使用在字段或者 setter 方法上. 我们可以使用 @Resource 注解的 name 属性来指定要注入
+     到属性中的 bean, 如果 name 未给出, 默认为字段名称或方法参数名称. 与 @Autowired 不同
+     的是, 使用 @Resource 时 spring 会先通过其中的 name 属性去容器中按 id | name 来
+     匹配 bean, 和 byName 的语意相同, 通过名字匹配不到 bean 时, 再通过类型去匹配
+
+     🌟 @Autowired 和 @Resource 的不同点:
+       1. spring 在解析 @Autowired 时先通过类型匹配 bean, 再通过名字匹配, 而 @Resource
+          正好与之相反
+       2. @Autowired 可以作用于字段, 构造器, 和方法上, 而 @Resource 只能作用在字段和
+          setter 方法上 -->
+
+    <bean id="petShop" class="com.seamew.xmlConfig.annotation.PetShop"/>
+
+    <bean id="semoy"
+          class="com.seamew.xmlConfig.annotation.Dog"
+          p:name="semoy"/>
+
+    <bean id="ragdoll"
+          class="com.seamew.xmlConfig.annotation.Cat"
+          p:name="ragdoll"/>
+
+    <bean id="petShopAddress"
+          class="com.seamew.xmlConfig.annotation.Address"
+          c:location="宁波市首南街道学府路一号"/>
+
+    <!-- 使用 primary 属性设置优先级 -->
+    <bean id="owner2"
+          class="com.seamew.xmlConfig.annotation.Person"
+          p:name="lulu"
+          primary="true"/>
+
+    <bean id="owner"
+          class="com.seamew.xmlConfig.annotation.Person"
+          p:name="xiaolan"/>
+
+    <!-- 使用 @Qualifier 注解指定这个 bean 被注入 -->
+    <bean id="petLicence"
+          class="com.seamew.xmlConfig.annotation.Licence"
+          c:name="pet store licence"/>
+
+    <bean id="foodLicence"
+          class="com.seamew.xmlConfig.annotation.Licence"
+          c:name="food licence"/>
+
+    <!-- 通过 @Resource 注入 -->
+    <bean id="petStoreBuilding"
+          class="com.seamew.xmlConfig.annotation.Building"
+          c:type="bungalow"/>
+
+</beans>

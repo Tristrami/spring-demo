@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="messagePattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %c [%thread]%-5level %msg%n" />
+    <property name="logFilePath" value="/Users/mac/Java/log/mybatis/mybatis.log" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder name="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${messagePattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${logFilePath}</file>
+        <encoder name="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${messagePattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <appender name="SQL_FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT_ASYNC" />
+    </root>
+</configuration>

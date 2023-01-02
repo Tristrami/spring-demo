@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 使用 xml 配置时要记得写, 不然注解会失效 -->
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:/hikari.properties"/>
+
+    <!-- 在 xml 配置中引入注解配置 -->
+    <bean class="com.seamew.annotationConfig.configuration.AppConfig"/>
+
+    <!-- 配置了 <context:property-placeholder/> 后可以使用 ${...} 引用 properties 中的属性 -->
+    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="driverClassName" value="${driverClassName}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+</beans>

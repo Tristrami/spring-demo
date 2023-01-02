@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="emailService" class="com.seamew.xmlConfig.event.EmailService">
+        <property name="blockList">
+            <list>
+                <value>example@qq.com</value>
+                <value>example@outlook.com</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="emailBlockedNotifier" class="com.seamew.xmlConfig.event.EmailBlockedNotifier">
+        <property name="notificationAddress" value="example@qq.com"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="conversionServiceFactoryBean" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.seamew.converter.StringToAnimalConverter"/>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="petShop" class="com.seamew.converter.PetShop">
+        <property name="animal" value="cat"/>
+    </bean>
+
+</beans>

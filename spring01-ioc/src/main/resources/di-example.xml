@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- DI 注入原语类型和集合类型数据的方式如下. 这些类型包含基础数据类型, 数组, String, List,
+         Set, Map, Properties, 集合类型中可以直接用 <bean/> 标签
+         🌟 注入空值时要使用 <null/> 标签 -->
+    <bean id="person" class="com.seamew.xmlConfig.entity.Person">
+        <property name="name" value="Jack"/>
+        <property name="age" value="21"/>
+        <property name="hobbies">
+            <array>
+                <value>basketball</value>
+                <value>football</value>
+            </array>
+        </property>
+        <property name="familyMembers">
+            <list>
+                <value>Mike</value>
+                <value>Lily</value>
+            </list>
+        </property>
+        <property name="contact">
+            <map>
+                <entry key="Mike" value="660001"/>
+                <entry key="Lily" value="660002"/>
+                <!-- <entry key="[key] value-ref="[springBeanId]"> -->
+            </map>
+        </property>
+        <property name="phoneNumbers">
+            <set>
+                <value>660003</value>
+                <value>660004</value>
+                <!-- <ref bean="[springBeanId]">> -->
+            </set>
+        </property>
+        <property name="props">
+            <props>
+                <prop key="group">develop</prop>
+            </props>
+        <!-- 也可以直接用以下形式配置 Properties 中的 key-value
+            <value>
+                group=develop
+                key=value
+                ...
+            </value>
+         -->
+        </property>
+        <property name="address">
+            <!-- 注入空值时要使用 <null/> 标签 -->
+            <null/>
+        </property>
+    </bean>
+
+    <!-- p 命名空间可以代替 <property> 标签, c 命名空间可以代替 <constructor-arg> 标签
+         xml 命名空间定义:
+         p: xmlns:p="http://www.springframework.org/schema/p"
+         c: xmlns:c="http://www.springframework.org/schema/c" -->
+    <bean id="p-namespace-person" class="com.seamew.xmlConfig.entity.Person"
+          p:name="p-namespace"
+          p:age="21"/>
+
+    <bean id="c-namespace-person" class="com.seamew.xmlConfig.entity.Person"
+          c:name="c-namespace"
+          c:age="21"/>
+
+    <!-- lazy-init 属性可以配置这个 bean 是否需要懒加载, false 即容器初始化时就加载这个 bean,
+         true 即使用这个 bean 时再加载 (使用 bean 的 class, 调用静态方法, 访问静态属性, new) -->
+    <bean id="lazy-bean" class="com.seamew.xmlConfig.entity.LazyBean" lazy-init="true"/>
+
+
+    <!-- <bean/> 标签中也可以不指定 <property/> 或者 <constructor-arg/>, 而是使用 autowire 属性
+         来让 spring 在容器中寻找合适的 bean 来为我们自动装配依赖, autowire 有四种模式:
+
+         1. no: 不用自动装配, 所有依赖都必须显式的配置 (所有依赖的 bean 都必须用 ref 属性引用)
+
+         2. byName: spring 在容器中寻找与待注入属性同名的 bean (id, name, alias 相同均可), 把
+            这个同名的 bean 通过 *setter* 方法注入给这个属性
+
+         3. byType: spring 在容器中寻找与待注入属性同类型的 bean (class 相同), 把这个同类型的
+            bean 通过 *setter* 方法注入给这个属性
+
+         4. constructor: 与 byType 类似. spring 会在 [class] 类中寻找参数列表中包含待注入属性类型
+            的构造器, 调用这个 *构造器* 注入依赖
+
+         🌟 要注意使用 byType 或者 constructor 的时候, spring 是通过 class 从容器中寻找对应的 bean,
+            满足条件的 bean 可能只存在一个也可能存在多个, 当待注入属性不是集合类型时, 如果找到多个 bean
+            就会报错, 但当这个属性是集合类型 (Collection<Type>) 或数组时 (Type[]), spring 会把所有满
+            足条件的 bean 注入到这个集合或数组当中. 当集合类型为 Map 时, 注入的形式为 Map<beanName, bean>
+
+         🌟 将个别 bean 排除在自动装配名单之外: 如果在全局设置了所有 bean 都要自动装配, 但又有个别 bean 不需要
+            自动装配, 这个时候可以在 <bean/> 中设置属性 autowire-candidate="false", 即这个 bean 不是自动
+            装配的候选者 -->
+
+    <bean id="autowired-byName-person" class="com.seamew.xmlConfig.entity.Person" autowire="byName"/>
+
+    <bean id="autowired-byType-person" class="com.seamew.xmlConfig.entity.Person" autowire="byType"/>
+
+    <bean id="autowired-constructor-person" class="com.seamew.xmlConfig.entity.Person" autowire="constructor"/>
+
+    <!-- 目前容器中可以自动装配到 Person 中的 bean 只有下面的 address -->
+    <bean id="address" class="com.seamew.xmlConfig.entity.Address"/>
+
+</beans>
